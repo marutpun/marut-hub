@@ -1,0 +1,8 @@
+{
+  "label": "Authentication with Auth.js (Credentials)",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Learn how to authenticate your Astro with Auth.js (by Credentials)"
+  }
+}
