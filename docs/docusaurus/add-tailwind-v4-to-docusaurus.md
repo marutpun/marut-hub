@@ -138,7 +138,7 @@ Remember, Docusaurus is designed for content, so focus on simplicity and clarity
 
 ## Add custom font into Tailwind CSS v4 (optional)
 
-Please follow this step first if you want to include external font [Add custom fonts from CDN to a Docsusaurus project](../google-fonts). Both CDN or local font.
+Please follow this step first if you want to include external font [Add custom fonts from CDN to a Docsusaurus project](add-custom-font-from-cdn-to-docusaurus). Both CDN or local font.
 
 After you're done, add the following snippets.
 

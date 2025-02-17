@@ -2,11 +2,33 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Guide
 
 Let's discover **Docusaurus in less than 5 minutes**.
 
-## Getting Started
+## Admonition
+
+Let's understand all admonitions.
+
+:::note
+This is simply information. It doesn’t change anything, affect you in any way, or require action. Feel free to ignore it.
+:::
+
+:::tip
+You **SHOULD** follow these instructions to improve efficiency, save time, and make things easier. It's a good practice that benefits you in the long run.
+:::
+
+:::info
+This is something you **SHOULD** know. It won’t benefit you directly, change your life, or prevent harm—but it’s still good information to have.
+:::
+
+:::warning
+You **SHOULD** follow these instructions for the best experience. Ignoring them won’t be dangerous, but it may cause unnecessary difficulty, wasted time, or inconvenience
+:::
+
+:::danger
+You **MUST** follow these instructions carefully. Failure to do so may result in serious danger, injury, or damage. Stay alert and proceed with caution.
+:::
 
 Get started by **creating a new site**.
 

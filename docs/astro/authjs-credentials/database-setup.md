@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Database Setup
+# 3. Database Setup
 
 Connect your application with Turso libSQL.
 
@@ -32,7 +32,7 @@ We recommend creating a new database, token and URL through the web browser. The
 :::
 
 :::warning
-Copy and save your Turso Token. Once closed, they can't be retrieved and you'll need to create new ones.
+Copy and save your Turso Token. Once closed, they can't be retrieved and you'll need to create new one.
 :::
 
 ## Add environment variables
@@ -59,6 +59,14 @@ astro db push --remote
 ```
 
 Then, visit https://app.turso.tech to see the result.
+
+| \_id    | username | password | created_at | updated_at |
+| ------- | -------- | -------- | ---------- | ---------- |
+| _empty_ | _empty_  | _empty_  | _empty_    | _empty_    |
+
+:::info
+To see Turso database on web browser. Click the menu icon and select **Edit Data > Drizzle Studio**
+:::
 
 ## Seeding (optional)
 
@@ -87,6 +95,10 @@ export default async function seed() {
 ```
 
 Then, visit https://app.turso.tech to see the result in `Users` database. (Refresh if you don't see it.)
+
+| \_id            | username | password | created_at          | updated_at |
+| --------------- | -------- | -------- | ------------------- | ---------- |
+| user_xoxo_iluvu | maruthub | pa$sw0rD | 2025-02-14 03:08:16 | 1739761696 |
 
 We'll transform password to random string next chapter.
 

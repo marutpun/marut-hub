@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Schema Setup
+# 2. Schema Setup
 
 Design a database schema with Astro DB.
 

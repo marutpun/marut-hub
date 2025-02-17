@@ -65,12 +65,12 @@ You can add font family directly or replace an existing Infima CSS variables.
   font-family: 'Geist', serif;
 }
 
+/* with fallback fonts */
 .card__title {
   font-family: 'Geist', Helvetica, Arial, sans-serif;
 }
 
 /* or replace Infima CSS variables */
-
 :root {
   /* ... */
   --ifm-font-family-base: 'Geist', serif;
