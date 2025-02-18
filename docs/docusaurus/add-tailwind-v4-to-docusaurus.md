@@ -158,10 +158,10 @@ You can replace Infima font base.
 
 ```css title="src/css/custom.css"
 :root {
-  /* ... */
+  /* // ... */
   --font-oswald: 'Oswald', 'sans-serif';
   --ifm-heading-font-family: var(--font-oswald);
-  /* ... */
+  /* // ... */
 }
 ```
 
@@ -169,5 +169,5 @@ You can replace Infima font base.
 
 - Install new Docusaurus project https://docusaurus.io/docs/installation#scaffold-project-website
 - Install TailwindCSS v4 with PostCSS https://tailwindcss.com/docs/installation/using-postcss
+- Configuration PostCSS options https://docusaurus.io/docs/api/plugin-methods/lifecycle-apis#configurePostCss
 - Customize font in TalwindCSS https://tailwindcss.com/docs/font-family#customizing-your-theme
-- `stylesheets` API https://docusaurus.io/docs/api/docusaurus-config#stylesheets

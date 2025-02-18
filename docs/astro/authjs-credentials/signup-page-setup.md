@@ -41,7 +41,7 @@ import Layout from '@/layouts/Layout.astro';
 <Layout>
   <form method="POST">
     <label for="username">Username</label>
-    <input type="text" id="password" name="username" autocomplete="off" />
+    <input type="text" id="username" name="username" autocomplete="off" />
     <label for="password">Password</label>
     <input type="password" id="password" name="password" />
     <label for="confirmPassword">Confirm Password</label>
@@ -58,10 +58,14 @@ Do not **FORGET** to include `id` and `name` attribute in each input element.
 
 ## Create types for response data.
 
-We'll make a scalable and maintainable response with jsend format. Create new 2 types files.
+We'll make a scalable and maintainable response with JSend format. Create new 2 types files.
 
 ```ts title="src/types/index.ts"
-export type JSend<T> = { status: 'success'; data: T | null; message?: string } | { status: 'fail'; data?: T; message?: string } | { status: 'error'; message?: string };
+export type JSend<T> =
+  | { status: 'success'; data: T | null; message?: string }
+  | { status: 'fail'; data?: T; message?: string }
+  | { status: 'error'; message?: string }
+  | { status: ''; data?: T; message?: string };
 ```
 
 :::info
@@ -111,9 +115,16 @@ export async function createUser(username: string, password: string): Promise<JS
       data: null,
     };
   } catch (error) {
+    if (error instanceof Error) {
+      return {
+        status: 'error',
+        message: error.message,
+      };
+    }
+
     return {
       status: 'error',
-      message: error.message,
+      message: 'An unknown error occurred',
     };
   }
 }
@@ -136,16 +147,13 @@ To simplify sign-in, all usernames are converted to lowercase. This prevents con
 ```tsx title="src/pages/signup.astro"
 ---
 import Layout from "@/layouts/Layout.astro";
-//highlight-start
+//highlight-next-line
 import { createUser } from '@/libs/insert';
-import type { JSend } from '@/types';
-import type { User } from '@/types/User';
-//highlight-end
 
 //highlight-start
 if (Astro.request.method === 'POST') {
   try {
-    //get FormData
+    // get FormData instance
     const signUpData = await Astro.request.formData();
     const username = signUpData.get('username') as string;
     const password = signUpData.get('password') as string;
@@ -153,15 +161,13 @@ if (Astro.request.method === 'POST') {
     // add new user and wait for returning status
     await createUser(username, password);
   } catch (error) {
-    if (error instanceof Error) {
-      console.error(error.message);
-    }
+    console.error(error.message);
   }
 }
 //highlight-end
 ---
 <Layout>
-//
+// ...
 </Layout>
 
 ```
@@ -172,21 +178,21 @@ Then, visit https://app.turso.tech to see the result in database. You'll see tha
 
 | \_id       | username | password                             | created_at          | updated_at |
 | ---------- | -------- | ------------------------------------ | ------------------- | ---------- |
-| s2SLxym74Z | admin    | $argon2id$v=19$m=19456,t=2,p=1$eM... | 2025-02-17 03:08:16 | 1739761696 |
+| s2SLxym74Z | admin    | $argon2id$v=19$m=19456,t=2,p=1$eM... | 2025-02-17 03:08:16 | 1739761234 |
 
-Let's move to the next chapter (optional) or next page.
+Let's move to the next section (optional) or next chapter.
 
 ---
 
 ## Handling duplicate usernames (optional)
 
-Would you like to reject a username if it already exists? Add the following code snippet in `catch` block.
+Would you like to reject a username if it already exists? Add the following code snippet.
 
 ### Query handle
 
 ```ts title="src/libs/insert.ts"
 try {
-  //
+  // ...
 } catch (error) {
   // highlight-start
   if (error.message.includes('UNIQUE constraint failed: Users.username')) {
@@ -196,100 +202,63 @@ try {
     };
   }
   // highlight-end
-  //
+  // ...
 }
 ```
 
 ### Server-side handle
 
-Add a new server-side variable and we'll pass it to client-side.
+Add a new server-side variable and we'll pass it to client-side. Declare `signUpResult` before `Astro.request.method` condition.
 
 ```tsx title="src/pages/signup.astro"
 ---
-//
+import Layout from '@/layouts/Layout.astro';
+import { createUser } from '@/libs/insert';
+//highlight-start
+import type { JSend } from '@/types';
+import type { User } from '@/types/User';
+//highlight-end
+
 //highlight-next-line
-let formResult: Jsend<User> | null = null;
+let signUpResult: JSend<User> = { status: '', data: {} as User };
 
 if (Astro.request.method === 'POST') {
   try {
-    //
-    //highlight-next-line
-    formResult = await createUser(username, password);
-  } catch (error) {
-    //
+    // ...
+  } catch {
+    if (error instanceof Error) {
+      console.error(error.message);
+      //highlight-next-line
+      signUpResult = { status: 'error', message: error.message };
+    }
   }
 }
-//
 ```
 
-### Client-side validation
+### Client-side UI
 
 Add `<form>` and new empty text `<p>` tag with `id`
 
 ```tsx title="src/pages/signup.astro"
 ---
-//
+// ...
 ---
 <Layout>
-  // highlight-next-line
-  <form method="POST" id="signUpForm">
+  <form method="POST">
     <label for="username">Username</label>
-    <input type="text" id="password" name="username" autocomplete="off" />
+    <input type="text" id="username" name="username" autocomplete="off" />
     // highlight-next-line
-    <p id="username-feedback" class="hidden"></p>
+    {signUpResult.status === 'fail' && signUpResult?.data?.username && <p>{signUpResult.data.username}</p>}
     <label for="password">Password</label>
     <input type="password" id="password" name="password" />
-    // highlight-next-line
-    <p id="password-feedback" class="hidden"></p>
     <label for="confirmPassword">Confirm Password</label>
     <input type="password" id="confirmPassword" name="confirmPassword" />
-    // highlight-next-line
-    <p id="confirmPassword-feedback" class="hidden"></p>
     <button type="submit">Sign Up</button>
   </form>
 </Layout>
 ```
 
-Then add `<script>` tag with `define:vars={{}}` attribute.
-
-```ts
-<script define:vars={{ formResult }}>
-if (formResult) {
-  const form = document.getElementById('signUpForm');
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById('username');
-  const usernameFeedback = document.getElementById('username-feedback');
-  const passwordFeedback = document.getElementById('password-feedback');
-
-  switch (formResult.status) {
-    case 'success':
-      window.location.href = '/signin'; // redirect to sign in page after success
-      break;
-
-    case 'fail':
-      // Handle validation failures
-      if (formResult.data?.username) {
-        usernameFeedback.textContent = formResult.data.username;
-        usernameInput.setAttribute('aria-describedby', 'username-feedback');
-        usernameFeedback.classList.remove('hidden');
-      }
-      if (formResult.data?.password) {
-        passwordFeedback.textContent = formResult.data.password;
-        passwordInput.setAttribute('aria-describedby', 'password-feedback');
-        passwordFeedback.classList.remove('hidden');
-      }
-      break;
-
-    case 'error':
-      // Handle server errors
-      window.location.href = '/404'; // redirect to 404
-      break;
-  }
-}
-</script>
-```
-
-## Post `signup.astro`
+## Post setup `signup.astro`
 
 ```tsx title="src/pages/signup.astro"
 ---
@@ -298,92 +267,55 @@ import { createUser } from '@/libs/insert';
 import type { JSend } from '@/types';
 import type { User } from '@/types/User';
 
-let formResult: Jsend<User> | null = null;
+let signUpResult: JSend<User> = { status: '', data: {} as User };
 
 if (Astro.request.method === 'POST') {
   try {
-    //get FormData
     const signUpData = await Astro.request.formData();
     const username = signUpData.get('username') as string;
     const password = signUpData.get('password') as string;
 
-    // add new user and wait for returning status
-    formResult = await createUser(username, password);
+    await createUser(username, password);
   } catch (error) {
     if (error instanceof Error) {
       console.error(error.message);
+      signUpResult = { status: 'error', message: error.message };
     }
   }
 }
 ---
 <Layout>
-  <form method="POST" id="signUpForm">
+  <form method="POST">
     <label for="username">Username</label>
     <input type="text" id="password" name="username" autocomplete="off" />
-    <p id="username-feedback" class="hidden"></p>
+    {signUpResult.status === 'fail' && signUpResult?.data?.username && <p>{signUpResult.data.username}</p>}
     <label for="password">Password</label>
     <input type="password" id="password" name="password" />
-    <p id="password-feedback" class="hidden"></p>
+    {signUpResult.status === 'fail' && signUpResult?.data?.password && <p>{signUpResult.data.password}</p>}
     <label for="confirmPassword">Confirm Password</label>
     <input type="password" id="confirmPassword" name="confirmPassword" />
-    <p id="confirmPassword-feedback" class="hidden"></p>
+    {signUpResult.status === 'fail' && signUpResult?.data?.confirmPassword && <p>{signUpResult.data.confirmPassword}</p>}
     <button type="submit">Sign Up</button>
   </form>
 </Layout>
-<script define:vars={{ formResult }}>
-if (formResult) {
-  const form = document.getElementById('signUpForm');
-  const usernameInput = document.getElementById('username');
-  const passwordInput = document.getElementById('password');
-  const confirmPasswordInput = document.getElementById('confirmPassword');
-  const usernameFeedback = document.getElementById('username-feedback');
-  const passwordFeedback = document.getElementById('password-feedback');
-  const confirmPasswordFeedback = document.getElementById('confirmPassword-feedback');
-
-  switch (formResult.status) {
-    case 'success':
-      window.location.href = '/signin'; // redirect to sign in page after success
-      break;
-
-    case 'fail':
-      // Handle validation failures
-      if (formResult.data?.username) {
-        usernameFeedback.textContent = formResult.data.username;
-        usernameInput.setAttribute('aria-describedby', 'username-feedback');
-        usernameFeedback.classList.remove('hidden');
-      }
-      if (formResult.data?.password) {
-        passwordFeedback.textContent = formResult.data.password;
-        passwordInput.setAttribute('aria-describedby', 'password-feedback');
-        passwordFeedback.classList.remove('hidden');
-      }
-      if (formResult.data?.confirmPassword) {
-        confirmPasswordFeedback.textContent = formResult.data.confirmPassword;
-        confirmPasswordInput.setAttribute('aria-describedby', 'confirmPassword-feedback');
-        confirmPasswordFeedback.classList.remove('hidden');
-      }
-      break;
-
-    case 'error':
-      // Handle server errors
-      window.location.href = '/404'; // redirect to 404
-      break;
-  }
-}
-</script>
 ```
 
 ## Quiz Time !
 
-Try to handle an empty username, empty password and unmatch confirm password and return (response) with jsend format.
+Try to handle an empty username, empty password and unmatch confirm password and return (response) with JSend format.
 
-**Hint** Edit `src/pages/signup.astro` file.
+**Hint**
+
+- Edit `src/pages/signup.astro` file.
 
 <details>
   <summary>Do you give up? Click to reveal an answer.</summary>
 
 ```tsx title="src/pages/signup.astro"
 ---
+//highlight-next-line
+let signUpResult: JSend<User> = { status: '', data: {} as User };
+
 if (Astro.request.method === 'POST') {
   try {
     const signUpData = await Astro.request.formData();
@@ -393,40 +325,38 @@ if (Astro.request.method === 'POST') {
     const confirmPassword = signUpData.get('confirmPassword') as string;
 
     //highlight-start
-    if (!username) {
-      formResult = {
-        ...formResult,
+    if (!username || username.trim() === '') {
+      signUpResult = {
         status: 'fail',
-        data: {
-          ...formResult.data,
-          username: 'Username is required',
-        },
+        data: { ...signUpResult.data, username: 'Username is required' },
       };
     }
     //highlight-end
 
     //highlight-start
-    if (!password) {
-      formResult = {
-        ...formResult,
+    if (!password || password.trim() === '') {
+      signUpResult = {
         status: 'fail',
-        data: {
-          ...formResult.data,
-          password: 'Password is required',
-        },
+        data: { ...signUpResult.data, password: 'Password is required' },
+      };
+    }
+    //highlight-end
+
+    //highlight-start
+    if (!confirmPassword || confirmPassword.trim() === '') {
+      signUpResult = {
+        status: 'fail',
+        data: { ...signUpResult.data, confirmPassword: 'Confirm password is required' },
       };
     }
     //highlight-end
 
     //highlight-start
     if (password !== confirmPassword) {
-      formResult = {
-        ...formResult,
+      signUpResult = {
+        ...signUpResult,
         status: 'fail',
-        data: {
-          ...formResult.data,
-          confirmPassword: 'Password doesn\'t match'
-        },
+        data: { ...signUpResult.data, confirmPassword: 'Confirm password does not match' },
       };
     }
     //highlight-end
@@ -439,15 +369,20 @@ if (Astro.request.method === 'POST') {
 
 :::note
 
-We use the spread operator (...) to prevent errors from overwriting each other. If both username and password have errors, the spread operator ensures both errors are kept in formResult without replacing the previous one. This way, multiple errors can stack up and show together.
+We use the spread operator (...) to prevent errors from overwriting each other. If both username and password have errors, the spread operator ensures both errors are kept in signUpResult without replacing the previous one. This way, multiple errors can stack up and show together.
 :::
 
 </details>
+
+## Summary
+
+We created a sign up page and a sign up form for inserting new username and password into a database. We use Nano ID as an ID and @node-rs/argon2 as a hashing password. Finally, we handle the errors from server-side to show in client-side with zero javascript in browser. It likes NextJS with server actions.
+
 ## References
 
 - Nano ID https://github.com/ai/nanoid
 - node-rs https://github.com/napi-rs/node-rs
-- jsend format https://github.com/omniti-labs/jsend
+- JSend format https://github.com/omniti-labs/JSend
 - Astro DB Insert https://docs.astro.build/en/guides/astro-db/#insert
 - Astro request method https://docs.astro.build/en/guides/on-demand-rendering/#astrorequestmethod
 - define:vars https://docs.astro.build/en/reference/directives-reference/#definevars

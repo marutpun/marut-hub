@@ -62,10 +62,10 @@ Then, visit https://app.turso.tech to see the result.
 
 | \_id    | username | password | created_at | updated_at |
 | ------- | -------- | -------- | ---------- | ---------- |
-| _empty_ | _empty_  | _empty_  | _empty_    | _empty_    |
+| _EMPTY_ | _EMPTY_  | _EMPTY_  | _EMPTY_    | _EMPTY_    |
 
 :::info
-To see Turso database on web browser. Click the menu icon and select **Edit Data > Drizzle Studio**
+To see Turso database on web browser. Click the kebab menu icon and select **Edit Data > Drizzle Studio**
 :::
 
 ## Seeding (optional)

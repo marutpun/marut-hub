@@ -4,9 +4,9 @@ sidebar_position: 1
 
 # Add Custom Font from CDN to a Docusaurus Project
 
-There are 2 methods how to add Google Fonts. By `<link>` or `@import`
+There are 2 methods how to add font. `<link>` or `@import`
 
-In this tutorial, I'll use Geist and Geist Mono font.
+In this tutorial, I'll use Geist and Geist Mono font from Google Fonts CDN.
 
 ## Via `<link>`
 
@@ -20,7 +20,7 @@ Let's get embeded code from Google Fonts
 <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&display=swap" rel="stylesheet" />
 ```
 
-Transform **HTMLLinkElement** into `Object[]` and add in `config` variable.
+Add `stylesheet` property with value as an array of object (`Object[]`) and add in `config` variable.
 
 ```ts title="docusaurus.config.ts"
 const config: Config = {
@@ -58,7 +58,7 @@ You need to restart the development server for any changes made in `docusaurus.c
 
 ## Usage new font in stylesheet
 
-You can add font family directly or replace an existing Infima CSS variables.
+You can add font family directly or replace an existing Infima CSS variables. Here is an example.
 
 ```css title="src/css/custom.css"
 .link {
@@ -72,10 +72,10 @@ You can add font family directly or replace an existing Infima CSS variables.
 
 /* or replace Infima CSS variables */
 :root {
-  /* ... */
+  /* // ... */
   --ifm-font-family-base: 'Geist', serif;
   --ifm-font-family-monospace: 'Geist Mono', serif;
-  /* ... */
+  /* // ... */
 }
 ```
 

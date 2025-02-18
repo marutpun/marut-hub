@@ -34,7 +34,8 @@ const Users = defineTable({});
 
 // https://astro.build/db/config
 export default defineDb({
-  tables: {},
+  //highlight-next-line
+  tables: { Users },
 });
 ```
 
@@ -61,7 +62,6 @@ const Users = defineTable({
 
 // https://astro.build/db/config
 export default defineDb({
-  //highlight-next-line
   tables: { Users },
 });
 ```
