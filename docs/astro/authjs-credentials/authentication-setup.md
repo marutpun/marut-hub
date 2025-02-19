@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # 5. Authentication Setup
 
-Now we're going to build a core of Auth.js, an authenticatino
+Now we're going to build a core of Auth.js, an authentication.
 
 ## Add environment variables
 

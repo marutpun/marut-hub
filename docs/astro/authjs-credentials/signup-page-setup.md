@@ -291,10 +291,8 @@ if (Astro.request.method === 'POST') {
     {signUpResult.status === 'fail' && signUpResult?.data?.username && <p>{signUpResult.data.username}</p>}
     <label for="password">Password</label>
     <input type="password" id="password" name="password" />
-    {signUpResult.status === 'fail' && signUpResult?.data?.password && <p>{signUpResult.data.password}</p>}
     <label for="confirmPassword">Confirm Password</label>
     <input type="password" id="confirmPassword" name="confirmPassword" />
-    {signUpResult.status === 'fail' && signUpResult?.data?.confirmPassword && <p>{signUpResult.data.confirmPassword}</p>}
     <button type="submit">Sign Up</button>
   </form>
 </Layout>
