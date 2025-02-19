@@ -1,5 +1,6 @@
 ---
 sidebar_position: 2
+title: 'Add CSS-in-JS Linaria'
 ---
 
 import Tabs from '@theme/Tabs';
